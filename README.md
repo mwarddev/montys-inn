@@ -1,31 +1,23 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
+# Monty's Inn
+## Room Booking System
 
-Welcome USER_NAME,
+Monty's Inn Room Booking System is a Command Line Interface (CLI) application for users to book a stay in the fictional beachfront Inn with a MOnty Python theme. Users can check availabilty for any of the 10 rooms Monty's Inn has to offer. Rooms also have a different number of beds, different facilities and different views. Users will be able to book a room and cancel the reservation at a later date if required. All room prices include the cost of breakfasts which consist of spam, eggs and ham.
 
-This is the Code Institute student template for deploying your third portfolio project, the Python command-line project. The last update to this file was: **August 17, 2021**
+## User stories
 
-## Reminders
+* User Goals
+    * The user wants to be able to check availabilty for the room they require to book.
+    * The user wishes to choose a room depending on number of beds required, type of facilities (WC or full En Suite), and type of view.
+    * The user wants to be able to book the room and recieve a calculated cost for the stay.
+    * The user wants to be able to return to the application and cancel a booking.
 
-* Your code must be placed in the `run.py` file
-* Your dependencies must be placed in the `requirements.txt` file
-* Do not edit any of the other files or your code may not deploy properly
+* Owner's Goals
+    * The owner wants to validate the user input to ensure the application runs without issue.
+    * The owner wants to take user information to assign bookings to the user.
+    * The owner wants to use the user information to reference the users booking in the event the user wishes to cancel the booking.
 
-## Creating the Heroku app
+## Structure
 
-When you create the app, you will need to add two buildpacks from the _Settings_ tab. The ordering is as follows:
+The flowchart created with [lucid.app](https://lucid.app) shows the flow of the app's logic.
 
-1. `heroku/python`
-2. `heroku/nodejs`
-
-You must then create a _Config Var_ called `PORT`. Set this to `8000`
-
-If you have credentials, such as in the Love Sandwiches project, you must create another _Config Var_ called `CREDS` and paste the JSON into the value field.
-
-Connect your GitHub repository and deploy as normal.
-
-## Constraints
-
-The deployment terminal is set to 80 columns by 24 rows. That means that each line of text needs to be 80 characters or less otherwise it will be wrapped onto a second line.
-
------
-Happy coding!
+![flowchart](read_me_images/flowchart.jpeg)
