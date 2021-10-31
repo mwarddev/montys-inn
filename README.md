@@ -1,7 +1,7 @@
 # Monty's Inn
 ## Room Booking System
 
-Monty's Inn Room Booking System is a Command Line Interface (CLI) application for users to book a stay in the fictional beachfront Inn with a MOnty Python theme. Users can check availabilty for any of the 10 rooms Monty's Inn has to offer. Rooms also have a different number of beds, different facilities and different views. Users will be able to book a room and cancel the reservation at a later date if required. All room prices include the cost of breakfasts which consist of spam, eggs and ham.
+Monty's Inn Room Booking System is a Command Line Interface (CLI) application for users to book a stay in the fictional beachfront Inn with a Monty Python theme. Users can check availabilty for any of the 10 rooms Monty's Inn has to offer. Rooms also have a different number of beds, different facilities and different views. Users will be able to book a room and cancel the reservation at a later date if required. All room prices include the cost of breakfasts which consist of spam, eggs and ham.
 
 ## User stories
 
