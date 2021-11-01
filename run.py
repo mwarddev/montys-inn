@@ -54,5 +54,9 @@ def validate_email(email):
         print(f"Unfortunately the email address you provided {e}. \nPlease provide a valid email address.\n")
         return False
 
-
+print("\nWelcome to Monty's Inn")
+print("Monty's Inn is a ficticious beachfront bed and breakfast.")
+print("Using this app you can check availability, book, and cancel rooms.")
+print("All prices include the cost of breakfast which consists of spam eggs and ham")
+print("(vegan option available).")
 get_user_creds()
