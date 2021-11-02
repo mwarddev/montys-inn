@@ -31,7 +31,7 @@ def get_user_creds():
         email = input("Email: ")
 
         if validate_email(email):
-            print("\nThank you. Your email address is valid.")
+            print("\nThank you. Your email address is valid.\n")
             break
 
     return fname, lname, email
@@ -44,7 +44,7 @@ def validate_email(email):
     """
 
     try:
-        pattern = r"([\w\d\.-]+)@([\w\d\.-]+)(\.[\w\.]+)"
+        pattern = r"([\w.-]+)@([\w.-]+)(\.[\w.]+)"
         match = re.search(pattern, email)
         if match:
             return True
@@ -54,9 +54,40 @@ def validate_email(email):
         print(f"Unfortunately the email address you provided {e}. \nPlease provide a valid email address.\n")
         return False
 
+
+def main_menu(fname):
+    """
+    This function takes a number as input to select a menu item 
+    and directs the user to the desired function.
+    """
+    print(f"Welcome {fname[0]}. Please select one of the following options:\n")
+    print("Enter 1 to check for availabilty and book a room.")
+    print("Enter 2 cancel a booking.")
+
+    menu_option = input("\nPlease enter an option number: ")
+
+    if menu_option == "1":
+        check_availability()
+    elif menu_option == "2":
+        cancel_booking()
+    else:
+        print("\nYour option is invalid. Please enter 1 or 2.\n")
+        main_menu(fname)
+
+def check_availability():
+    print("Check availability")
+
+
+def cancel_booking():
+    print("Cancel Booking")
+
+
+
 print("\nWelcome to Monty's Inn")
 print("Monty's Inn is a ficticious beachfront bed and breakfast.")
 print("Using this app you can check availability, book, and cancel rooms.")
 print("All prices include the cost of breakfast which consists of spam eggs and ham")
 print("(vegan option available).")
-get_user_creds()
+
+user_creds = get_user_creds()
+menu = main_menu(user_creds)
