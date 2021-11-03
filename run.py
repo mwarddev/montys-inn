@@ -44,14 +44,14 @@ def validate_email(email):
     """
 
     try:
-        pattern = r"([\w.-]+)@([\w.-]+)(\.[\w.]+)"
+        pattern = r"[\w\.-]+@[\w\.-]+\.[\w\.]+"
         match = re.search(pattern, email)
         if match:
             return True
         else:
             raise ValueError(f"{email} is not valid")
     except ValueError as e:
-        print(f"Unfortunately the email address you provided {e}. \nPlease provide a valid email address.\n")
+        print(f"Unfortunately the email address you provided {e}.\nPlease provide a valid email address.\n")
         return False
 
 
@@ -74,9 +74,42 @@ def main_menu(fname):
         print("\nYour option is invalid. Please enter 1 or 2.\n")
         main_menu(fname)
 
-def check_availability():
-    print("Check availability")
 
+def check_availability():
+    """
+    Take and validate user input and check the data against the booking spreadsheet for availability.
+    """
+    print("From which date would you like to start your stay?")
+
+    while True:
+        print("Please enter the date using the following format: dd/mm/yyyy\n")
+        start_date = input("Start date: ")
+
+        if validate_date(start_date):
+            print("\nThank You. This date is valid")
+            break
+        return start_date
+
+    while True:
+        print("\nHow many nights woul you like to stay?\n")
+        duration = input("Number of nights: ")
+
+        if duration == int():
+            Print("\nThank you")
+            break
+        else:
+            print("\nPlease enter a valid number")
+            print("For example: 7\n")
+
+    print("\n Checking for available dates...")
+
+    check_date = SHEET.worksheet("bookings").get_all_values()
+
+
+def validate_date(date):
+    """
+    Validates format of user input date and checks that date is un range of the worksheet
+    """
 
 def cancel_booking():
     print("Cancel Booking")
