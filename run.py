@@ -45,13 +45,13 @@ def validate_email(email):
 
     try:
         pattern = r"[\w\.-]+@[\w\.-]+\.[\w\.]+"
-        match = re.search(pattern, email)
-        if match:
+        email_match = re.search(pattern, email)
+        if email_match:
             return True
         else:
             raise ValueError(f"{email} is not valid")
-    except ValueError as e:
-        print(f"Unfortunately the email address you provided {e}.\nPlease provide a valid email address.\n")
+    except ValueError as email_error:
+        print(f"Unfortunately the email address you provided {email_error}.\nPlease provide a valid email address.\n")
         return False
 
 
@@ -91,25 +91,65 @@ def check_availability():
         return start_date
 
     while True:
-        print("\nHow many nights woul you like to stay?\n")
-        duration = input("Number of nights: ")
+        print("\nHow many nights would you like to stay?\n")
+        duration = int(float(input("Number of nights: ")))
 
-        if duration == int():
-            Print("\nThank you")
+        if validate_duration(duration):
+            print("Thank you.")
             break
-        else:
-            print("\nPlease enter a valid number")
-            print("For example: 7\n")
+        return duration
+
+    print(duration)
 
     print("\n Checking for available dates...")
 
-    check_date = SHEET.worksheet("bookings").get_all_values()
+    check_date = SHEET.worksheet("bookings")
+    date_column = check_date.col_values(1)
+    for date_index, item in enumerate(date_column):
+        if item == start_date:
+            print(date_index)
 
 
 def validate_date(date):
     """
-    Validates format of user input date and checks that date is un range of the worksheet
+    Validates format of user input date and checks that date is in range of the worksheet
     """
+    try:
+        date_in_range = SHEET.worksheet("bookings").col_values(1)
+
+        date_pattern = r"([\d{2}\/][\d{2}\/][\d{4}])"
+        date_match = re.search(date_pattern, date)
+
+        if date_match:
+            if date in date_in_range:
+                print("Thank you. The date you provided is valid.")
+                return True
+            else:
+                print(f"Sorry. The date you have entered({date}) is out of range.")
+                print("Please select another date.")
+                return False
+            return True
+        else:
+            raise ValueError(f"{date} is not valid")
+    except ValueError as date_error:
+        print(f"Unfortunately the date you provided {date_error}.")
+        print("Please provide a valid date in the format dd/mm/yyyy.\n")
+        return False
+
+def validate_duration(duration):
+    """
+    Converts user input to int & float then validates if input is a string or number.  
+    """
+
+    try:
+        if isinstance(duration, int):
+            return True
+        else:
+            raise ValueError(f"({duration}) is invalid")
+    except ValueError as un_numable:
+        print(f"The number you entered {un_numable}")
+        print("Please enter a valid number. For example: 7")
+        return False
 
 def cancel_booking():
     print("Cancel Booking")
