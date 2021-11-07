@@ -99,15 +99,29 @@ def check_availability():
             break
         return duration
 
-    print(duration)
-
     print("\n Checking for available dates...")
 
-    check_date = SHEET.worksheet("bookings")
-    date_column = check_date.col_values(1)
+    # Gets the index value of the start date requested by the user
+    bookings = SHEET.worksheet("bookings")
+    date_column = bookings.col_values(1)
     for date_index, item in enumerate(date_column):
         if item == start_date:
-            print(date_index)
+            start_date_index = date_index
+
+    # Gets a list of lists of prices of rooms for the duration the user requested
+    # Converts retrieved prices to floats
+    available_rooms = []
+    for values in range(2, 12):
+        room_values = bookings.col_values(values)
+        room_range = room_values[start_date_index:start_date_index + duration]
+        if "Martin" in room_range:
+            print("booked")
+        else:
+            print("room available")
+        
+        available_rooms.append(room_range)
+        #float_available_rooms = [float(price) for price in available_rooms]
+    print(available_rooms)
 
 
 def validate_date(date):
@@ -136,6 +150,7 @@ def validate_date(date):
         print("Please provide a valid date in the format dd/mm/yyyy.\n")
         return False
 
+
 def validate_duration(duration):
     """
     Converts user input to int & float then validates if input is a string or number.  
@@ -150,6 +165,7 @@ def validate_duration(duration):
         print(f"The number you entered {un_numable}")
         print("Please enter a valid number. For example: 7")
         return False
+
 
 def cancel_booking():
     print("Cancel Booking")
