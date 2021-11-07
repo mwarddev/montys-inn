@@ -115,12 +115,11 @@ def check_availability():
         room_values = bookings.col_values(values)
         room_range = room_values[start_date_index:start_date_index + duration]
         if "Martin" in room_range:
-            print("booked")
+            continue
         else:
             print("room available")
-        
-        available_rooms.append(room_range)
-        #float_available_rooms = [float(price) for price in available_rooms]
+        float_room_range = [float(price) for price in room_range]
+        available_rooms.append(float_room_range)
     print(available_rooms)
 
 
