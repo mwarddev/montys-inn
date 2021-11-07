@@ -114,10 +114,19 @@ def check_availability():
     for values in range(2, 12):
         room_values = bookings.col_values(values)
         room_range = room_values[start_date_index:start_date_index + duration]
-        if "Martin" in room_range:
+        room_name = room_values[0]
+        room_sleeps = room_values[1]
+        room_beds = room_values[2]
+        room_facilities = room_values[3]
+        room_view = room_values[4]
+        room_cost = sum(room_range)
+        if "booked" in room_range:
             continue
         else:
-            print("room available")
+            print(f"{room_name} available.\n")
+            print(f"{room_name} sleeps {room_sleeps} people in {room_beds}.\n")
+            print(f"{room_name} has a {room_facilities} and has {room_view}.\n")
+            print("=" * 80 "\n")
         float_room_range = [float(price) for price in room_range]
         available_rooms.append(float_room_range)
     print(available_rooms)
@@ -135,7 +144,6 @@ def validate_date(date):
 
         if date_match:
             if date in date_in_range:
-                print("Thank you. The date you provided is valid.")
                 return True
             else:
                 print(f"Sorry. The date you have entered({date}) is out of range.")
