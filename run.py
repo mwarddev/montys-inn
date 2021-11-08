@@ -56,29 +56,29 @@ def validate_email(email):
         return False
 
 
-def main_menu(fname):
+def main_menu(creds):
     """
     This function takes a number as input to select a menu item 
     and directs the user to the desired function.
     """
-    print(f"Welcome {fname[0]}. Please select one of the following options:\n")
+    print(f"Welcome {creds[0]}. Please select one of the following options:\n")
     print("Enter 1 to check for availabilty and book a room.")
     print("Enter 2 cancel a booking.")
 
     menu_option = input("\nPlease enter an option number: ")
 
     if menu_option == "1":
-        get_date_info()
+        main_booking()
     elif menu_option == "2":
         cancel_booking()
     else:
         print("\nYour option is invalid. Please enter 1 or 2.\n")
-        main_menu(fname)
+        main_menu(user_creds)
 
 
 def get_date_info():
     """
-    Take and validate user date and duration input.
+    Take and validate user date input.
     """
     print("From which date would you like to start your stay?")
 
@@ -89,31 +89,35 @@ def get_date_info():
         if validate_date(start_date):
             print("\nThank You. This date is valid")
             break
-        return start_date
+    return start_date
 
+
+def get_duration_info():
+    """
+    Take and validate user duration input.
+    """
     while True:
         print("\nHow many nights would you like to stay?\n")
         duration = int(float(input("Number of nights: ")))
 
         if validate_duration(duration):
-            print("Thank you.")
+            print("Thank you.\n")
             break
-        return duration
-
-    print("\n Checking for available rooms...\n")
-    get_available_room_data(start_date, duration)
+    return duration
 
 
-def get_available_room_data(start_date, duration):
+def get_available_room_data(date, duration):
     """
     Check date data against bookings worksheet
     and get list of available rooms.
     """
+    print("\n Checking for available rooms...\n")
+    print(date, duration)
     # Gets the index value of the start date requested by the user
     bookings = SHEET.worksheet("bookings")
     date_column = bookings.col_values(1)
     for date_index, item in enumerate(date_column):
-        if item == start_date:
+        if item == date:
             start_date_index = date_index
 
     # Gets a list of lists of prices of rooms for the requested duration
@@ -136,28 +140,33 @@ def get_available_room_data(start_date, duration):
             print(f"\n{room_name} available.\n")
             print(f"{room_name} sleeps {room_sleeps} with {room_beds}.")
             print(f"{room_name} has {room_facilities} and {room_view}.")
-            print(f"Room cost = £{room_cost} for {duration} nights from {start_date}.")
+            print(f"Room cost = £{room_cost} for {duration} nights from {date}.")
             print("=" * 80)
             rooms.append(room_name)
 
-    book_room(rooms)
+    return rooms
 
 
-def book_room(rooms):
+def book_room(room_data, date_info):
     """
     Take user input to select required room and write
     booking data to spreadsheet
     """
     booking_dict = {}
     print("\nPlease select one of the following options:")
-    for ind, room in enumerate(rooms):
+    for ind, room in enumerate(room_data):
         booking_dict.update({ind + 1: room})
         print(f"Enter {ind + 1} to book {room}.")
     print("Enter 0 to select a different date.")
     print("Enter 'exit' to exit to main menu.\n")
 
-    #booking_option = input("Enter option: ")
+    booking_option = input("Enter option: ")
+    update_worksheet = SHEET.worksheet("user_booking_info")
+
     print(booking_dict)
+    # for key, value in booking_dict:
+    #     if key == booking_option:
+    #         update_worksheet.append_row()
 
 
 def validate_date(date):
@@ -208,14 +217,27 @@ def cancel_booking():
     print("Cancel Booking")
 
 
+def main():
+    """
+    Call all functions
+    """
+    user_creds = get_user_creds()
+    main_menu(user_creds)
+    
+
+def main_booking():
+    """
+    Call booking functions
+    """
+    date_info = get_date_info()
+    duration_info = get_duration_info()
+    room_data = get_available_room_data(date_info, duration_info)
+    book_room(room_data, date_info)
+
 print("\nWelcome to Monty's Inn")
 print("Monty's Inn is a ficticious beachfront bed and breakfast.")
 print("Using this app you can check availability, book, and cancel rooms.")
 print("All prices include breakfast which consists of spam eggs and ham")
 print("(vegan option available).")
 
-user_creds = get_user_creds()
-menu = main_menu(user_creds)
-# date_info = get_date_info()
-# room_data = get_available_room_data(date_info)
-# book_room = book_room(room_data)
+main()
