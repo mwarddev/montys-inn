@@ -120,6 +120,7 @@ def get_available_room_data(date, duration):
     # Gets a list of lists of prices of rooms for the requested duration
     # Converts retrieved prices to floats
     rooms = []
+    rooms_dict = {}
     for values in range(2, 12):
         room_values = bookings.col_values(values)
         room_range = room_values[start_date_index:start_date_index + duration]
@@ -128,28 +129,32 @@ def get_available_room_data(date, duration):
         room_beds = room_values[2]
         room_facilities = room_values[3]
         room_view = room_values[4]
+        
         if "booked" in room_range:
             continue
         else:
             float_room_range = [float(price) for price in room_range]
             room_cost = sum(float_room_range)
+            rooms_dict.update({room_name: room_cost})
             print(f"\n{room_name} available.\n")
             print(f"{room_name} sleeps {room_sleeps} with {room_beds}.")
             print(f"{room_name} has {room_facilities} and {room_view}.")
             print(f"Room cost = £{room_cost} for {duration} nights from {date}.")
             print("=" * 80)
             rooms.append(room_name)
-    return rooms
+    return rooms, rooms_dict
 
 
-def book_room(room_data, date_info, user_creds):
+def book_room(room_data, date_info, duration_info, user_creds):
     """
     Take user input to select required room and write
     booking data to spreadsheet
     """
+    print(room_data)
+    print(duration_info)
     booking_dict = {}
     print("\nPlease select one of the following options:")
-    for ind, room in enumerate(room_data):
+    for ind, room in enumerate(room_data[0]):
         booking_dict.update({ind + 1: room})
         print(f"Enter {ind + 1} to book {room}.")
 
@@ -158,10 +163,10 @@ def book_room(room_data, date_info, user_creds):
     booking_option = input("Enter option: ")
     update_worksheet = SHEET.worksheet("user_booking_info")
     print(booking_dict)
-    
 
     # for key, value in booking_dict:
     #     if key == booking_option:
+    #         data = user_creds[2], user_creds[0], user_creds[1], date_info, duration_info, room_data, 
     #         update_worksheet.append_row()
 
 
@@ -225,7 +230,7 @@ def main_booking():
     date_info = get_date_info()
     duration_info = get_duration_info()
     room_data = get_available_room_data(date_info, duration_info)
-    book_room(room_data, date_info, main.user_creds)
+    book_room(room_data, date_info, duration_info, main.user_creds)
 
 print("\nWelcome to Monty's Inn")
 print("Monty's Inn is a ficticious beachfront bed and breakfast.")
