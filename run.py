@@ -162,12 +162,13 @@ def book_room(room_data, date_info, duration_info, user_creds):
     print("Enter 'exit' to exit to main menu.\n")
     booking_option = input("Enter option: ")
     update_worksheet = SHEET.worksheet("user_booking_info")
-    print(booking_dict)
 
-    # for key, value in booking_dict:
-    #     if key == booking_option:
-    #         data = user_creds[2], user_creds[0], user_creds[1], date_info, duration_info, room_data, 
-    #         update_worksheet.append_row()
+    for key, value in booking_dict.items():
+        if int(booking_option) == key:
+            if value in room_data[1]:
+                price = room_data[1][value]
+                data = (user_creds[2], user_creds[0], user_creds[1], date_info, duration_info, value, price) 
+                update_worksheet.append_row(data)
 
 
 def validate_date(date):
