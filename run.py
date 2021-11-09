@@ -73,8 +73,7 @@ def main_menu(creds):
         cancel_booking()
     else:
         print("\nYour option is invalid. Please enter 1 or 2.\n")
-        main_menu(user_creds)
-
+        main_menu(creds)
 
 def get_date_info():
     """
@@ -85,7 +84,6 @@ def get_date_info():
     while True:
         print("Please enter the date using the following format: dd/mm/yyyy\n")
         start_date = input("Start date: ")
-
         if validate_date(start_date):
             print("\nThank You. This date is valid")
             break
@@ -99,7 +97,6 @@ def get_duration_info():
     while True:
         print("\nHow many nights would you like to stay?\n")
         duration = int(float(input("Number of nights: ")))
-
         if validate_duration(duration):
             print("Thank you.\n")
             break
@@ -112,7 +109,7 @@ def get_available_room_data(date, duration):
     and get list of available rooms.
     """
     print("\n Checking for available rooms...\n")
-    print(date, duration)
+    
     # Gets the index value of the start date requested by the user
     bookings = SHEET.worksheet("bookings")
     date_column = bookings.col_values(1)
@@ -131,7 +128,6 @@ def get_available_room_data(date, duration):
         room_beds = room_values[2]
         room_facilities = room_values[3]
         room_view = room_values[4]
-
         if "booked" in room_range:
             continue
         else:
@@ -143,11 +139,10 @@ def get_available_room_data(date, duration):
             print(f"Room cost = £{room_cost} for {duration} nights from {date}.")
             print("=" * 80)
             rooms.append(room_name)
-
     return rooms
 
 
-def book_room(room_data, date_info):
+def book_room(room_data, date_info, user_creds):
     """
     Take user input to select required room and write
     booking data to spreadsheet
@@ -157,13 +152,14 @@ def book_room(room_data, date_info):
     for ind, room in enumerate(room_data):
         booking_dict.update({ind + 1: room})
         print(f"Enter {ind + 1} to book {room}.")
+
     print("Enter 0 to select a different date.")
     print("Enter 'exit' to exit to main menu.\n")
-
     booking_option = input("Enter option: ")
     update_worksheet = SHEET.worksheet("user_booking_info")
-
     print(booking_dict)
+    
+
     # for key, value in booking_dict:
     #     if key == booking_option:
     #         update_worksheet.append_row()
@@ -176,10 +172,8 @@ def validate_date(date):
     """
     try:
         date_in_range = SHEET.worksheet("bookings").col_values(1)
-
         date_pattern = r"([\d{2}\/][\d{2}\/][\d{4}])"
         date_match = re.search(date_pattern, date)
-
         if date_match:
             if date in date_in_range:
                 return True
@@ -201,7 +195,6 @@ def validate_duration(duration):
     Converts user input to int & float then validates 
     if input is a string or number.
     """
-
     try:
         if isinstance(duration, int):
             return True
@@ -221,9 +214,9 @@ def main():
     """
     Call all functions
     """
-    user_creds = get_user_creds()
-    main_menu(user_creds)
-    
+    main.user_creds = get_user_creds()
+    main_menu(main.user_creds)
+
 
 def main_booking():
     """
@@ -232,7 +225,7 @@ def main_booking():
     date_info = get_date_info()
     duration_info = get_duration_info()
     room_data = get_available_room_data(date_info, duration_info)
-    book_room(room_data, date_info)
+    book_room(room_data, date_info, main.user_creds)
 
 print("\nWelcome to Monty's Inn")
 print("Monty's Inn is a ficticious beachfront bed and breakfast.")
