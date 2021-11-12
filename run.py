@@ -13,6 +13,7 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("monty's_inn")
 
+
 def get_user_creds():
     """
     Get and store user name and email address for use in booking
@@ -56,9 +57,9 @@ def validate_email(email):
         return False
 
 
-def main_menu(creds):
+def menu(creds):
     """
-    This function takes a number as input to select a menu item 
+    This function takes a number as input to select a menu item
     and directs the user to the desired function.
     """
     print(f"Welcome {creds[0]}. Please select one of the following options:\n")
@@ -73,7 +74,8 @@ def main_menu(creds):
         cancel_booking()
     else:
         print("\nYour option is invalid. Please enter 1 or 2.\n")
-        main_menu(creds)
+        menu(creds)
+
 
 def get_date_info():
     """
@@ -109,7 +111,7 @@ def get_available_room_data(date, duration):
     and get list of available rooms.
     """
     print("\n Checking for available rooms...\n")
-    
+
     # Gets the index value of the start date requested by the user
     bookings = SHEET.worksheet("bookings")
     date_column = bookings.col_values(1)
@@ -129,17 +131,17 @@ def get_available_room_data(date, duration):
         room_beds = room_values[2]
         room_facilities = room_values[3]
         room_view = room_values[4]
-        
+
         if "booked" in room_range:
             continue
         else:
             float_room_range = [float(price) for price in room_range]
             room_cost = sum(float_room_range)
             rooms_dict.update({room_name: room_cost})
-            print(f"\n{room_name} available.\n")
-            print(f"{room_name} sleeps {room_sleeps} with {room_beds}.")
-            print(f"{room_name} has {room_facilities} and {room_view}.")
-            print(f"Room cost = £{room_cost} for {duration} nights from {date}.")
+            print(f"\n{room_name} available\n")
+            print(f"{room_name} sleeps {room_sleeps} with {room_beds}")
+            print(f"{room_name} has {room_facilities} and {room_view}")
+            print(f"Room cost: £{room_cost} for {duration} nights from {date}")
             print("=" * 80)
             rooms.append(room_name)
     return rooms, rooms_dict, start_date_index
@@ -162,27 +164,41 @@ def book_room(room_data, date_info, duration_info, user_creds):
 
     print("\nProcessing your booking. Please wait...\n")
     update_worksheet = SHEET.worksheet("user_booking_info")
+    if booking_option == "0":
+        main_booking()
+    elif booking_option == "exit":
+        main_menu()
+    else:
+        # write to user_booking_info worksheet
+        for key, value in booking_dict.items():
+            if int(booking_option) == key:
+                if value in room_data[1]:
+                    price = room_data[1][value]
+                    data = (user_creds[2],
+                            user_creds[0],
+                            user_creds[1],
+                            date_info,
+                            duration_info,
+                            value,
+                            price)
+                    update_worksheet.append_row(data)
 
-    # write to user_booking_info worksheet
-    for key, value in booking_dict.items():
-        if int(booking_option) == key:
-            if value in room_data[1]:
-                price = room_data[1][value]
-                data = (user_creds[2], user_creds[0], user_creds[1], date_info, duration_info, value, price)
-                update_worksheet.append_row(data)
+        # Write to bookings worksheet
+        booked = SHEET.worksheet("bookings")
+        booked_row = booked.row_values(1)
+        for ind, val in enumerate(booked_row):
+            if val == data[5]:
+                room_col = ind + 1
+                row_count = 1
+                while row_count <= duration_info:
+                    booked_row = room_data[2] + row_count
+                    booked.update_cell(booked_row, room_col, "booked")
+                    row_count += 1
+        print(f"Thank you {user_creds[0]}. You have booked {data[5]}")
+        print(f"from {date_info} for {duration_info} nights.")
+        print(f"Total cost: £{price}.\n")
+        print("Booking complete.")
 
-    # Write to bookings worksheet
-            booked = SHEET.worksheet("bookings")
-            booked_row_values = booked.row_values(1)
-            for ind, val in enumerate(booked_row_values):
-                if val == data[5]:
-                    room_col = ind + 1
-                    row_count = 1
-                    while row_count <= duration_info:
-                        iter_row = room_data[2] + row_count
-                        booked.update_cell(iter_row, room_col, "booked")
-                        row_count += 1
-    print("Booking complete.")
 
 def validate_date(date):
     """
@@ -197,8 +213,8 @@ def validate_date(date):
             if date in date_in_range:
                 return True
             else:
-                print(f"Sorry. The date you have entered ({date}) is out of range.")
-                print("Please select another date.")
+                print(f"Sorry. The date you have entered ({date})")
+                print("is out of range. \nPlease select another date.")
                 return False
             return True
         else:
@@ -211,7 +227,7 @@ def validate_date(date):
 
 def validate_duration(duration):
     """
-    Converts user input to int & float then validates 
+    Converts user input to int & float then validates
     if input is a string or number.
     """
     try:
@@ -226,15 +242,25 @@ def validate_duration(duration):
 
 
 def cancel_booking():
+    """
+    Call cancellation functions
+    """
     print("Cancel Booking")
 
 
-def main():
+def start():
     """
     Call all functions
     """
-    main.user_creds = get_user_creds()
-    main_menu(main.user_creds)
+    start.user_creds = get_user_creds()
+    main_menu()
+
+
+def main_menu():
+    """
+    Call main menu function
+    """
+    menu(start.user_creds)
 
 
 def main_booking():
@@ -244,7 +270,8 @@ def main_booking():
     date_info = get_date_info()
     duration_info = get_duration_info()
     room_data = get_available_room_data(date_info, duration_info)
-    book_room(room_data, date_info, duration_info, main.user_creds)
+    book_room(room_data, date_info, duration_info, start.user_creds)
+
 
 print("\nWelcome to Monty's Inn")
 print("Monty's Inn is a ficticious beachfront bed and breakfast.")
@@ -252,4 +279,4 @@ print("Using this app you can check availability, book, and cancel rooms.")
 print("All prices include breakfast which consists of spam eggs and ham")
 print("(vegan option available).")
 
-main()
+start()
