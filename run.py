@@ -64,13 +64,16 @@ def menu(creds):
     """
     print(f"Welcome {creds[0]}. Please select one of the following options:\n")
     print("Enter 1 to check for availabilty and book a room.")
-    print("Enter 2 cancel a booking.")
+    print("Enter 2 to view your booking/s.")
+    print("Enter 3 cancel a booking.")
 
     menu_option = input("\nPlease enter an option number: ")
 
     if menu_option == "1":
         main_booking()
     elif menu_option == "2":
+        booking_info()
+    elif menu_option == "3":
         cancel_booking()
     else:
         print("\nYour option is invalid. Please enter 1 or 2.\n")
@@ -251,11 +254,28 @@ def validate_duration(duration):
         return False
 
 
-def cancel_booking():
+def get_booking_info(user_creds):
     """
-    Call cancellation functions
+    Retrieves user's booking info from worksheet
     """
-    print("Cancel Booking")
+    print("\nSearching for your bookings...\n")
+    view_bookings = SHEET.worksheet("user_booking_info")
+    email_col = view_bookings.col_values(1)
+    user_booking_list = []
+    for ind, value in enumerate(email_col):
+        if value == user_creds[2]:
+            row_ind = ind
+            user_bookings = view_bookings.row_values(row_ind + 1)
+            user_booking_list.append(user_bookings)
+            print(f"\n{user_bookings[5]} booked.")
+            print(f"Start date: {user_bookings[3]}.")
+            print(f"Duration: {user_bookings[4]} nights.")
+            print(f"Cost: {user_bookings[6]}.")
+            print("=" * 80)
+        else:
+            print("\nSorry. We couldn't find your booking/s.")
+            print("Please re-enter your name and email address to try again.")
+            start()
 
 
 def start():
@@ -281,6 +301,20 @@ def main_booking():
     duration_info = get_duration_info()
     room_data = get_available_room_data(date_info, duration_info)
     book_room(room_data, date_info, duration_info, start.user_creds)
+
+
+def cancel_booking():
+    """
+    Call cancellation functions
+    """
+    print("Cancel Booking")
+
+
+def booking_info():
+    """
+    Calls the get_booking_info function
+    """
+    get_booking_info(start.user_creds)
 
 
 print("\nWelcome to Monty's Inn")
