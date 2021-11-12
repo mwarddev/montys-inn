@@ -81,13 +81,13 @@ def get_date_info():
     """
     Take and validate user date input.
     """
-    print("From which date would you like to start your stay?")
+    print("\nFrom which date would you like to start your stay?")
 
     while True:
         print("Please enter the date using the following format: dd/mm/yyyy\n")
         start_date = input("Start date: ")
         if validate_date(start_date):
-            print("\nThank You. This date is valid")
+            print("\nThank You. This date is valid.")
             break
     return start_date
 
@@ -136,7 +136,7 @@ def get_available_room_data(date, duration):
             continue
         else:
             float_room_range = [float(price) for price in room_range]
-            room_cost = sum(float_room_range)
+            room_cost = round(sum(float_room_range), 2)
             rooms_dict.update({room_name: room_cost})
             print(f"\n{room_name} available\n")
             print(f"{room_name} sleeps {room_sleeps} with {room_beds}")
@@ -159,45 +159,55 @@ def book_room(room_data, date_info, duration_info, user_creds):
         print(f"Enter {ind + 1} to book {room}.")
 
     print("Enter 0 to select a different date.")
-    print("Enter 'exit' to exit to main menu.\n")
-    booking_option = input("Enter option: ")
+    print("Enter 101 to exit to main menu.\n")
+    booking_option = int(input("Enter option: "))
 
-    print("\nProcessing your booking. Please wait...\n")
     update_worksheet = SHEET.worksheet("user_booking_info")
-    if booking_option == "0":
-        main_booking()
-    elif booking_option == "exit":
-        main_menu()
-    else:
-        # write to user_booking_info worksheet
-        for key, value in booking_dict.items():
-            if int(booking_option) == key:
-                if value in room_data[1]:
-                    price = room_data[1][value]
-                    data = (user_creds[2],
-                            user_creds[0],
-                            user_creds[1],
-                            date_info,
-                            duration_info,
-                            value,
-                            price)
-                    update_worksheet.append_row(data)
+    try:
+        if booking_option == 0:
+            main_booking()
+        elif booking_option == 101:
+            main_menu()
+        elif booking_option:
+            print("\nProcessing your booking. Please wait...\n")
 
-        # Write to bookings worksheet
-        booked = SHEET.worksheet("bookings")
-        booked_row = booked.row_values(1)
-        for ind, val in enumerate(booked_row):
-            if val == data[5]:
-                room_col = ind + 1
-                row_count = 1
-                while row_count <= duration_info:
-                    booked_row = room_data[2] + row_count
-                    booked.update_cell(booked_row, room_col, "booked")
-                    row_count += 1
-        print(f"Thank you {user_creds[0]}. You have booked {data[5]}")
-        print(f"from {date_info} for {duration_info} nights.")
-        print(f"Total cost: £{price}.\n")
-        print("Booking complete.")
+            # write to user_booking_info worksheet
+            for key, value in booking_dict.items():
+                if booking_option != key:
+                    print("The option you entered is invalid.")
+                    print("Please try again.")
+                    book_room(room_data, date_info, duration_info, user_creds)
+                else:
+                    if value in room_data[1]:
+                        price = room_data[1][value]
+                        data = (user_creds[2],
+                                user_creds[0],
+                                user_creds[1],
+                                date_info,
+                                duration_info,
+                                value,
+                                price)
+                        update_worksheet.append_row(data)
+
+            # Write to bookings worksheet
+            booked = SHEET.worksheet("bookings")
+            booked_row = booked.row_values(1)
+            for ind, val in enumerate(booked_row):
+                if val == data[5]:
+                    room_col = ind + 1
+                    row_count = 1
+                    while row_count <= duration_info:
+                        booked_row = room_data[2] + row_count
+                        booked.update_cell(booked_row, room_col, "booked")
+                        row_count += 1
+            print(f"Thank you {user_creds[0]}. You have booked {data[5]}")
+            print(f"from {date_info} for {duration_info} nights.")
+            print(f"Total cost: £{price}.\n")
+            print("Booking complete.")
+    except ValueError:
+        print("\nThe option you entered is invalid.")
+        print("Please try again.")
+        book_room(room_data, date_info, duration_info, user_creds)
 
 
 def validate_date(date):
