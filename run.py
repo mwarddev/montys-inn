@@ -275,7 +275,7 @@ def get_booking_info(user_creds):
             print(f"\n{user_bookings[5]} booked.")
             print(f"Start date: {user_bookings[3]}.")
             print(f"Duration: {user_bookings[4]} nights.")
-            print(f"Cost: {user_bookings[6]}.")
+            print(f"Cost: £{user_bookings[6]}.")
             print("=" * 80)
         
     if user_creds[2] not in email_col:        
@@ -314,7 +314,7 @@ def cancel_booking():
     Call cancellation functions
     """
     print("Cancel Booking")
-
+    main_menu()
 
 def booking_info():
     """
