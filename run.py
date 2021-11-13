@@ -21,15 +21,15 @@ def get_user_creds():
     """
 
     print("\nPlease enter your first name.\n")
-    fname = input("First Name: ")
+    fname = input("First Name: \n")
     print("\nThank you.")
     print("Please enter your last name.\n")
-    lname = input("Last Name: ")
+    lname = input("Last Name: \n")
     print("\nThank you.")
 
     while True:
         print("Please enter your email address.\n")
-        email = input("Email: ")
+        email = input("Email: \n")
 
         if validate_email(email):
             print("\nThank you. Your email address is valid.\n")
@@ -67,7 +67,7 @@ def menu(creds):
     print("Enter 2 to view your booking/s.")
     print("Enter 3 cancel a booking.")
 
-    menu_option = input("\nPlease enter an option number: ")
+    menu_option = input("\nPlease enter an option number: \n")
 
     if menu_option == "1":
         main_booking()
@@ -101,7 +101,7 @@ def get_duration_info():
     """
     while True:
         print("\nHow many nights would you like to stay?\n")
-        duration = int(float(input("Number of nights: ")))
+        duration = int(float(input("Number of nights: \n")))
         if validate_duration(duration):
             print("Thank you.\n")
             break
@@ -154,8 +154,7 @@ def book_room(room_data, date_info, duration_info, user_creds):
     """
     Take user input to select required room and write
     booking data to spreadsheet
-    """
-    
+    """    
     booking_dict = {}
     print("\nPlease select one of the following options:\n")
     for ind, room in enumerate(room_data[0]):
@@ -164,7 +163,7 @@ def book_room(room_data, date_info, duration_info, user_creds):
 
     print("Enter 0 to select a different date.")
     print("Enter 101 to exit to main menu.\n")
-    booking_option = int(input("Enter option: "))
+    booking_option = int(input("Enter option: \n"))
 
     update_worksheet = SHEET.worksheet("user_booking_info")
     try:
@@ -279,9 +278,7 @@ def get_booking_info(user_creds):
             print(f"Cost: {user_bookings[6]}.")
             print("=" * 80)
         
-    if user_creds[2] not in email_col:
-        print(value)
-        print(user_creds[2])        
+    if user_creds[2] not in email_col:        
         print("\nSorry. We couldn't find your booking/s.")
         print("Please re-enter your name and email address to try again.")
         start()
