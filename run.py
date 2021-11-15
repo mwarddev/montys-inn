@@ -146,7 +146,8 @@ def get_available_room_data(date_info, duration):
             print(f"\n{room_name} available\n")
             print(f"{room_name} sleeps {room_sleeps} with {room_beds}")
             print(f"{room_name} has {room_facilities} and {room_view}")
-            print(f"Room cost: £{room_cost} for {duration} nights from {date_info}")
+            print(f"Room cost: £{room_cost}")
+            print(f"Duration: {duration} nights from {date_info}")
             print("=" * 79)
             rooms.append(room_name)
     return rooms, rooms_dict, start_date_index
@@ -208,11 +209,13 @@ def book_room(room_data, date_info, duration_info, user_creds):
                             row_count = 1
                             while row_count <= duration_info:
                                 booked_row = room_data[2] + row_count
-                                booked.update_cell(booked_row, room_col, "booked")
+                                booked.update_cell(booked_row,
+                                                   room_col, "booked")
                                 row_count += 1
-                    print(f"Thank you {user_creds[0]}. You have booked {data[5]}")
-                    print(f"from {date_info} for {duration_info} nights.")
-                    print(f"Total cost: £{price}.\n")
+                    print(f"Thank you {user_creds[0]}")
+                    print(f"You have booked {data[5]}")
+                    print(f"From {date_info} for {duration_info} night/s")
+                    print(f"Total cost: £{price}\n")
                     print("Booking complete.\n")
                     main_menu()
     # validates if input is a number.
@@ -244,14 +247,14 @@ def get_booking_info(user_creds):
             print(f"\nBooking number: {option}\n")
             print(f"Room: {user_bookings[5]}")
             print(f"Start date: {user_bookings[3]}")
-            print(f"Duration: {user_bookings[4]} nights")
+            print(f"Duration: {user_bookings[4]} night/s")
             print(f"Cost: £{user_bookings[6]}")
             print("=" * 79)
             option += 1
     # Runs if no bookings found.
     if user_creds[2] not in email_col:
         print("\nSorry. We couldn't find your booking/s.")
-        print("Please re-enter your name and email address to try again.")
+        print("Please re-enter your details to try again.")
         start()
     return user_booking_list
 
@@ -291,8 +294,10 @@ def cancel(bookings):
                 # Get values from default prices worksheet and add them to the
                 # same cells in the bookings worksheet
                 while row_count <= int(bookings[cancel_option - 1][4]) - 1:
-                    price = price_list.cell(booked_row + row_count, room_col).value
-                    booked_sheet.update_cell(booked_row + row_count, room_col, price)
+                    price = price_list.cell(booked_row + row_count,
+                                            room_col).value
+                    booked_sheet.update_cell(booked_row + row_count,
+                                             room_col, price)
                     row_count += 1
                 # Delete user booking info from user_booking_info worksheet
                 for row_ind, booking_id in enumerate(info_sheet.col_values(8)):
