@@ -1,3 +1,4 @@
+from datetime import date
 import re
 import gspread
 from google.oauth2.service_account import Credentials
@@ -59,7 +60,7 @@ def validate_email(email):
     """
 
     try:
-        pattern = r"[\w\.-]+@[\w\.-]+\.[\w\.]+"
+        pattern = r"^[\w\.-]+@[\w\.-]+\.[\w\.]+$"
         email_match = re.search(pattern, email)
         if email_match:
             return True
@@ -104,8 +105,12 @@ def get_date_info():
         print("Please enter the date using the following format: dd/mm/yyyy\n")
         start_date = input("Start date: ")
         if validate_date(start_date):
-            print("\nThank You. This date is valid.")
-            break
+            if validate_future_date(start_date):
+                print("\nThank You. This date is valid.")
+                break
+            else:
+                print("\nSorry. This date has already passed.")
+                print("please enter a valid date.\n")
     return start_date
 
 
@@ -122,7 +127,7 @@ def get_duration_info():
     return duration
 
 
-def get_available_room_data(date, duration):
+def get_available_room_data(date_info, duration):
     """
     Check date data against bookings worksheet
     and get list of available rooms.
@@ -133,7 +138,7 @@ def get_available_room_data(date, duration):
     bookings = SHEET.worksheet("bookings")
     date_column = bookings.col_values(1)
     for date_index, item in enumerate(date_column):
-        if item == date:
+        if item == date_info:
             start_date_index = date_index
 
     # Gets a list of lists of prices of rooms for the requested duration
@@ -158,7 +163,7 @@ def get_available_room_data(date, duration):
             print(f"\n{room_name} available\n")
             print(f"{room_name} sleeps {room_sleeps} with {room_beds}")
             print(f"{room_name} has {room_facilities} and {room_view}")
-            print(f"Room cost: £{room_cost} for {duration} nights from {date}")
+            print(f"Room cost: £{room_cost} for {duration} nights from {date_info}")
             print("=" * 80)
             rooms.append(room_name)
     return rooms, rooms_dict, start_date_index
@@ -238,28 +243,47 @@ def book_room(room_data, date_info, duration_info, user_creds):
         book_room(room_data, date_info, duration_info, user_creds)
 
 
-def validate_date(date):
+def validate_date(user_date):
     """
     Validates format of user input date and checks that date
     is in range of the worksheet
     """
     try:
         date_in_range = SHEET.worksheet("bookings").col_values(1)
-        date_pattern = r"([\d{2}\/][\d{2}\/][\d{4}])"
-        date_match = re.search(date_pattern, date)
+        date_pattern = r"^[\d]{2}\/[\d]{2}\/[\d]{4}$"
+        date_match = re.search(date_pattern, user_date)
         if date_match:
-            if date in date_in_range:
+            if user_date in date_in_range:
                 return True
             else:
-                print(f"Sorry. The date you have entered ({date})")
-                print("is not available. \nPlease select another date.")
+                print(f"\nSorry. The date you have entered ({user_date})")
+                print("is not available. \nPlease enter another date.\n")
                 return False
         else:
-            raise ValueError(f"{date} is not valid")
+            raise ValueError(f"{user_date} is not valid")
     except ValueError as date_error:
-        print(f"Unfortunately the date you provided {date_error}.")
+        print(f"\nUnfortunately the date you provided {date_error}.")
         print("Please provide a valid date in the format dd/mm/yyyy.\n")
         return False
+
+
+def validate_future_date(user_date):
+    """
+    Checks user entered date against datetime object to ensure
+    past date is not entered.
+    """
+    date_column = SHEET.worksheet("bookings").col_values(1)
+    today_date = date.today()
+    format_date = today_date.strftime("%d/%m/%Y")
+    for date_ind, date_val in enumerate(date_column):
+        if format_date == date_val:
+            today_ind = date_ind
+            if user_date == date_val:
+                user_ind = date_ind
+                if today_ind <= user_ind:
+                    return True
+                else:
+                    return False
 
 
 def validate_duration(duration):
