@@ -1,6 +1,7 @@
+import re
 import gspread
 from google.oauth2.service_account import Credentials
-import re
+
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -17,16 +18,25 @@ SHEET = GSPREAD_CLIENT.open("monty's_inn")
 def get_user_creds():
     """
     Get and store user name and email address for use in booking
-     and cancellation process
+    and cancellation process
     """
-
+    # Get first name
     print("\nPlease enter your first name.\n")
     fname = input("First Name: \n")
-    print("\nThank you.")
-    print("Please enter your last name.\n")
-    lname = input("Last Name: \n")
+    if fname == "":
+        print("First Name can not be blank.")
+        get_user_creds()
     print("\nThank you.")
 
+    # Get last name
+    print("Please enter your last name.\n")
+    lname = input("Last Name: \n")
+    if lname == "":
+        print("Last Name can not be blank.")
+        get_user_creds()
+    print("\nThank you.")
+
+    # Get and validate email
     while True:
         print("Please enter your email address.\n")
         email = input("Email: \n")
@@ -154,7 +164,7 @@ def book_room(room_data, date_info, duration_info, user_creds):
     """
     Take user input to select required room and write
     booking data to spreadsheet
-    """    
+    """
     booking_dict = {}
     print("\nPlease select one of the following options:\n")
     for ind, room in enumerate(room_data[0]):
@@ -173,11 +183,15 @@ def book_room(room_data, date_info, duration_info, user_creds):
             main_menu()
         else:
             print("\nProcessing your booking. Please wait...\n")
-            
+
             # write to user_booking_info worksheet
             for key, value in booking_dict.items():
-                if booking_option == key:                    
-                
+                if booking_option == key:
+                    id_row = update_worksheet.col_values(8)
+                    if id_row[-1] == "booking id":
+                        new_id = 1
+                    else:
+                        new_id = int(id_row[-1]) + 1
                     if value in room_data[1]:
                         price = room_data[1][value]
                         data = (user_creds[2],
@@ -186,7 +200,8 @@ def book_room(room_data, date_info, duration_info, user_creds):
                                 date_info,
                                 duration_info,
                                 value,
-                                price)
+                                price,
+                                new_id)
                         update_worksheet.append_row(data)
 
                     # Write to bookings worksheet
@@ -205,18 +220,18 @@ def book_room(room_data, date_info, duration_info, user_creds):
                     print(f"Total cost: £{price}.\n")
                     print("Booking complete.\n")
                     main_menu()
-                       
+
     except ValueError:
         print("\nThe option you entered is invalid.")
         print("Please try again.")
         book_room(room_data, date_info, duration_info, user_creds)
-    
+
     #for key, value in booking_dict.items():
         #if booking_option != key:
     if booking_option not in booking_dict.keys():
         print("\nThe option you entered is invalid.")
         print("Please try again.")
-        book_room(room_data, date_info, duration_info, user_creds)    
+        book_room(room_data, date_info, duration_info, user_creds)
 
 
 def validate_date(date):
@@ -280,8 +295,8 @@ def get_booking_info(user_creds):
             print(f"Cost: £{user_bookings[6]}")
             print("=" * 80)
             option += 1
-        
-    if user_creds[2] not in email_col:        
+
+    if user_creds[2] not in email_col:
         print("\nSorry. We couldn't find your booking/s.")
         print("Please re-enter your name and email address to try again.")
         start()
@@ -299,7 +314,7 @@ def cancel(bookings):
     price_list = SHEET.worksheet("default_prices")
     info_sheet = SHEET.worksheet("user_booking_info")
     cancel_option = int(input("Booking number: \n"))
-    
+
     try:
         for ind, _ in enumerate(bookings):
             # Matches option selected with the index in the bookings list
@@ -320,17 +335,17 @@ def cancel(bookings):
                         room_col = cell_ind + 1
                 booked_row = selected_date_index + 1
                 row_count = 0
-                # Get values from default prices worksheet and add them to the 
+                # Get values from default prices worksheet and add them to the
                 # same cells in the bookings worksheet
                 while row_count <= int(bookings[cancel_option - 1][4])- 1:
-                    price = price_list.cell(booked_row + row_count, room_col).value                    
+                    price = price_list.cell(booked_row + row_count, room_col).value
                     booked_sheet.update_cell(booked_row + row_count, room_col, price)
-                    row_count += 1            
+                    row_count += 1
                 # Delete user booking info from user_booking_info worksheet
                 for row_ind, booking_id in enumerate(info_sheet.col_values(8)):
                     if booking_id == bookings[cancel_option - 1][7]:
                         info_sheet.delete_rows(row_ind + 1)
-                
+
                 print("\nYour room has been cancelled")
                 main_menu()
     except ValueError:
@@ -376,8 +391,8 @@ def cancel_booking():
     """
     Call cancellation functions
     """
-    booking_info = get_booking_info(start.user_creds)
-    cancel(booking_info)
+    booked_info = get_booking_info(start.user_creds)
+    cancel(booked_info)
     main_menu()
 
 def booking_info():
