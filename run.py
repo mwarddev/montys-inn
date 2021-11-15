@@ -57,11 +57,14 @@ def menu(creds):
     This function takes a number as input to select a menu item
     and directs the user to the desired function.
     """
-    print(f"\nWelcome {creds[0]}. Please select one of the following options:\n")
-    print("Enter 1 to check for availabilty and book a room.")
-    print("Enter 2 to view your booking/s.")
-    print("Enter 3 cancel a booking.")
-
+    print(f"\nWelcome {creds[0]}. Please select from the following options:\n")
+    menu_options = """
+    Enter 1 to check for availabilty and book a room.
+    Enter 2 to view your booking/s.
+    Enter 3 cancel a booking.
+    """
+    print(menu_options)
+    # Takes user input and checks choice against avilable options
     menu_option = input("\nPlease enter an option number: \n")
 
     if menu_option == "1":
@@ -80,7 +83,8 @@ def get_date_info():
     Take and validate user date input.
     """
     print("\nFrom which date would you like to start your stay?")
-
+    # Takes user input and validates for format, date in available
+    # dates and date hasn't already passed.
     while True:
         print("Please enter the date using the following format: dd/mm/yyyy\n")
         start_date = input("Start date: ")
@@ -95,6 +99,7 @@ def get_duration_info():
     """
     Take and validate user duration input.
     """
+    # Takes user input and validates that it's an integer.
     while True:
         print("\nHow many nights would you like to stay?\n")
         duration = int(float(input("Number of nights: \n")))
@@ -130,10 +135,11 @@ def get_available_room_data(date_info, duration):
         room_beds = room_values[2]
         room_facilities = room_values[3]
         room_view = room_values[4]
-
+        # Checks if requested date range contains a booking.
         if "booked" in room_range:
             continue
         else:
+            # Prints available room info.
             float_room_range = [float(price) for price in room_range]
             room_cost = round(sum(float_room_range), 2)
             rooms_dict.update({room_name: room_cost})
@@ -141,7 +147,7 @@ def get_available_room_data(date_info, duration):
             print(f"{room_name} sleeps {room_sleeps} with {room_beds}")
             print(f"{room_name} has {room_facilities} and {room_view}")
             print(f"Room cost: £{room_cost} for {duration} nights from {date_info}")
-            print("=" * 80)
+            print("=" * 79)
             rooms.append(room_name)
     return rooms, rooms_dict, start_date_index
 
@@ -151,17 +157,19 @@ def book_room(room_data, date_info, duration_info, user_creds):
     Take user input to select required room and write
     booking data to spreadsheet
     """
+    # Creates a dynamic options list of available rooms and
+    # stores the data in a dictionary.
     booking_dict = {}
     print("\nPlease select one of the following options:\n")
     for ind, room in enumerate(room_data[0]):
         booking_dict.update({ind + 1: room})
         print(f"Enter {ind + 1} to book {room}.")
-
+    # Prints other options
     print("Enter 0 to select a different date.")
     print("Enter 101 to exit to main menu.\n")
     booking_option = int(input("Enter option: \n"))
-
     update_worksheet = SHEET.worksheet("user_booking_info")
+    # Checks user input for other options selected first.
     try:
         if booking_option == 0:
             main_booking()
@@ -169,8 +177,9 @@ def book_room(room_data, date_info, duration_info, user_creds):
             main_menu()
         else:
             print("\nProcessing your booking. Please wait...\n")
+            # If room booking selected, validate input.
+            # write to user_booking_info worksheet.
 
-            # write to user_booking_info worksheet
             for key, value in booking_dict.items():
                 if booking_option == key:
                     id_row = update_worksheet.col_values(8)
@@ -206,17 +215,13 @@ def book_room(room_data, date_info, duration_info, user_creds):
                     print(f"Total cost: £{price}.\n")
                     print("Booking complete.\n")
                     main_menu()
-
+    # validates if input is a number.
     except ValueError:
-        print("\nThe option you entered is invalid.")
-        print("Please try again.")
+        print("\nThe option you entered is invalid.\nPlease try again.")
         book_room(room_data, date_info, duration_info, user_creds)
-
-    #for key, value in booking_dict.items():
-        #if booking_option != key:
+    # Validates if number is in options list.
     if booking_option not in booking_dict.keys():
-        print("\nThe option you entered is invalid.")
-        print("Please try again.")
+        print("\nThe option you entered is invalid.\nPlease try again.")
         book_room(room_data, date_info, duration_info, user_creds)
 
 
@@ -224,6 +229,8 @@ def get_booking_info(user_creds):
     """
     Retrieves user's booking info from worksheet
     """
+    # Checks if bookings have been made against user's
+    # email address and outputs booking info if available
     print("\nSearching for your bookings...\n")
     view_bookings = SHEET.worksheet("user_booking_info")
     email_col = view_bookings.col_values(1)
@@ -239,9 +246,9 @@ def get_booking_info(user_creds):
             print(f"Start date: {user_bookings[3]}")
             print(f"Duration: {user_bookings[4]} nights")
             print(f"Cost: £{user_bookings[6]}")
-            print("=" * 80)
+            print("=" * 79)
             option += 1
-
+    # Runs if no bookings found.
     if user_creds[2] not in email_col:
         print("\nSorry. We couldn't find your booking/s.")
         print("Please re-enter your name and email address to try again.")
@@ -283,7 +290,7 @@ def cancel(bookings):
                 row_count = 0
                 # Get values from default prices worksheet and add them to the
                 # same cells in the bookings worksheet
-                while row_count <= int(bookings[cancel_option - 1][4])- 1:
+                while row_count <= int(bookings[cancel_option - 1][4]) - 1:
                     price = price_list.cell(booked_row + row_count, room_col).value
                     booked_sheet.update_cell(booked_row + row_count, room_col, price)
                     row_count += 1
@@ -291,20 +298,19 @@ def cancel(bookings):
                 for row_ind, booking_id in enumerate(info_sheet.col_values(8)):
                     if booking_id == bookings[cancel_option - 1][7]:
                         info_sheet.delete_rows(row_ind + 1)
-
+                # Print success and return to main menu
                 print("\nYour room has been cancelled")
                 main_menu()
+    # Validates selected option.
     except ValueError:
-        print("The option you entred is invalid.")
-        print("Please enter a valid option")
+        print("The option you entred is invalid.\nPlease enter a valid option")
         cancel(bookings)
-
+    # Validates option is available.
     cancel_index_list = []
     for ind, _ in enumerate(bookings):
         cancel_index_list.append(ind)
     if cancel_option - 1 not in cancel_index_list:
-        print("The option you entred is invalid.")
-        print("Please try again.")
+        print("The option you entred is invalid.\nPlease try again.")
         cancel(bookings)
 
 
@@ -333,6 +339,7 @@ def main_booking():
     book_room(room_data, date_info, duration_info, start.user_creds)
     main_menu()
 
+
 def cancel_booking():
     """
     Call cancellation functions
@@ -340,6 +347,7 @@ def cancel_booking():
     booked_info = get_booking_info(start.user_creds)
     cancel(booked_info)
     main_menu()
+
 
 def booking_info():
     """
@@ -349,10 +357,14 @@ def booking_info():
     main_menu()
 
 
-print("\nWelcome to Monty's Inn\n")
-print("Monty's Inn is a ficticious beachfront bed and breakfast.")
-print("Using this app you can check availability, book, and cancel rooms.")
-print("All prices include breakfast which consists of spam eggs and ham")
-print("(vegan option available).")
+# Welcome message.
+welcome = """
+\nWelcome to Monty's Inn\n
+Monty's Inn is a ficticious beachfront bed and breakfast.
+Using this app you can check availability, book, and cancel rooms.
+All prices include breakfast which consists of spam eggs and ham
+(vegan option available).
+"""
+print(welcome)
 
 start()

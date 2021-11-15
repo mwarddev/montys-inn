@@ -15,6 +15,7 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open("monty's_inn")
 
+
 def validate_email(email):
     """
     Try block checks email address validation using regex and raises a
@@ -68,7 +69,7 @@ def validate_future_date(user_date):
     for date_ind, date_val in enumerate(date_column):
         if format_date == date_val:
             today_ind = date_ind
-    for date_ind, date_val in enumerate(date_column):        
+    for date_ind, date_val in enumerate(date_column):
         if user_date == date_val:
             user_ind = date_ind
             if int(user_ind) >= int(today_ind):
