@@ -76,7 +76,7 @@ def menu(creds):
     elif menu_option == "3":
         cancel_booking()
     else:
-        print("\nYour option is invalid. Please enter 1 or 2.\n")
+        print("\nYour option is invalid. Please enter 1, 2 or 3.\n")
         menu(creds)
 
 
@@ -171,7 +171,7 @@ def book_room(room_data, date_info, duration_info, user_creds):
             main_booking()
         elif booking_option == 101:
             main_menu()
-        elif True:
+        else:
             print("\nProcessing your booking. Please wait...\n")
             
             # write to user_booking_info worksheet
@@ -203,7 +203,7 @@ def book_room(room_data, date_info, duration_info, user_creds):
                     print(f"Thank you {user_creds[0]}. You have booked {data[5]}")
                     print(f"from {date_info} for {duration_info} nights.")
                     print(f"Total cost: £{price}.\n")
-                    print("Booking complete.\n2")
+                    print("Booking complete.\n")
                     main_menu()
                        
     except ValueError:
@@ -211,11 +211,12 @@ def book_room(room_data, date_info, duration_info, user_creds):
         print("Please try again.")
         book_room(room_data, date_info, duration_info, user_creds)
     
-    for key, value in booking_dict.items():
-        if booking_option != key:
-            print("\nThe option you entered is invalid.")
-            print("Please try again.")
-            book_room(room_data, date_info, duration_info, user_creds)    
+    #for key, value in booking_dict.items():
+        #if booking_option != key:
+    if booking_option not in booking_dict.keys():
+        print("\nThe option you entered is invalid.")
+        print("Please try again.")
+        book_room(room_data, date_info, duration_info, user_creds)    
 
 
 def validate_date(date):
@@ -232,9 +233,8 @@ def validate_date(date):
                 return True
             else:
                 print(f"Sorry. The date you have entered ({date})")
-                print("is out of range. \nPlease select another date.")
+                print("is not available. \nPlease select another date.")
                 return False
-            return True
         else:
             raise ValueError(f"{date} is not valid")
     except ValueError as date_error:
@@ -267,21 +267,84 @@ def get_booking_info(user_creds):
     view_bookings = SHEET.worksheet("user_booking_info")
     email_col = view_bookings.col_values(1)
     user_booking_list = []
+    option = 1
     for ind, value in enumerate(email_col):
         if value == user_creds[2]:
             row_ind = ind
             user_bookings = view_bookings.row_values(row_ind + 1)
             user_booking_list.append(user_bookings)
-            print(f"\n{user_bookings[5]} booked.")
-            print(f"Start date: {user_bookings[3]}.")
-            print(f"Duration: {user_bookings[4]} nights.")
+            print(f"\nBooking number: {option}\n")
+            print(f"Room: {user_bookings[5]}")
+            print(f"Start date: {user_bookings[3]}")
+            print(f"Duration: {user_bookings[4]} nights")
             print(f"Cost: £{user_bookings[6]}")
             print("=" * 80)
+            option += 1
         
     if user_creds[2] not in email_col:        
         print("\nSorry. We couldn't find your booking/s.")
         print("Please re-enter your name and email address to try again.")
         start()
+    return user_booking_list
+
+
+def cancel(bookings):
+    """
+    Get user data from get_booking_info function
+    update bookings worksheet and delete required row from
+    user_bookings_info worksheet
+    """
+    print("\nPlease select which booking you wish to cancel\n")
+    booked_sheet = SHEET.worksheet("bookings")
+    price_list = SHEET.worksheet("default_prices")
+    info_sheet = SHEET.worksheet("user_booking_info")
+    cancel_option = int(input("Booking number: \n"))
+    
+    try:
+        for ind, _ in enumerate(bookings):
+            # Matches option selected with the index in the bookings list
+            if cancel_option - 1 == ind:
+                # Gets the date of the selected booking
+                # to be used to get the row index in the bookings worksheet
+                selected_date = bookings[cancel_option - 1][3]
+                # Gets index of selected date
+                for date_ind, value in enumerate(booked_sheet.col_values(1)):
+                    if selected_date == value:
+                        selected_date_index = date_ind
+                print("\nCancelling your booking...")
+                # Gets the room row of the bookings worksheet to get
+                # column index
+                room_row = booked_sheet.row_values(1)
+                for cell_ind, val in enumerate(room_row):
+                    if val == bookings[cancel_option - 1][5]:
+                        room_col = cell_ind + 1
+                booked_row = selected_date_index + 1
+                row_count = 0
+                # Get values from default prices worksheet and add them to the 
+                # same cells in the bookings worksheet
+                while row_count <= int(bookings[cancel_option - 1][4])- 1:
+                    price = price_list.cell(booked_row + row_count, room_col).value                    
+                    booked_sheet.update_cell(booked_row + row_count, room_col, price)
+                    row_count += 1            
+                # Delete user booking info from user_booking_info worksheet
+                for row_ind, booking_id in enumerate(info_sheet.col_values(8)):
+                    if booking_id == bookings[cancel_option - 1][7]:
+                        info_sheet.delete_rows(row_ind + 1)
+                
+                print("\nYour room has been cancelled")
+                main_menu()
+    except ValueError:
+        print("The option you entred is invalid.")
+        print("Please enter a valid option")
+        cancel(bookings)
+
+    cancel_index_list = []
+    for ind, _ in enumerate(bookings):
+        cancel_index_list.append(ind)
+    if cancel_option - 1 not in cancel_index_list:
+        print("The option you entred is invalid.")
+        print("Please try again.")
+        cancel(bookings)
 
 
 def start():
@@ -313,7 +376,8 @@ def cancel_booking():
     """
     Call cancellation functions
     """
-    print("Cancel Booking")
+    booking_info = get_booking_info(start.user_creds)
+    cancel(booking_info)
     main_menu()
 
 def booking_info():
@@ -324,7 +388,7 @@ def booking_info():
     main_menu()
 
 
-print("\nWelcome to Monty's Inn")
+print("\nWelcome to Monty's Inn\n")
 print("Monty's Inn is a ficticious beachfront bed and breakfast.")
 print("Using this app you can check availability, book, and cancel rooms.")
 print("All prices include breakfast which consists of spam eggs and ham")
