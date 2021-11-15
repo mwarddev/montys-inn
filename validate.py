@@ -39,11 +39,13 @@ def validate_date(user_date):
     Validates format of user input date and checks that date
     is in range of the worksheet
     """
+    # Check format with regex.
     try:
         date_in_range = SHEET.worksheet("bookings").col_values(1)
         date_pattern = r"^[\d]{2}\/[\d]{2}\/[\d]{4}$"
         date_match = re.search(date_pattern, user_date)
         if date_match:
+            # Check date is in range of the worksheet.
             if user_date in date_in_range:
                 return True
             else:
