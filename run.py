@@ -21,20 +21,24 @@ def get_user_creds():
     and cancellation process
     """
     # Get first name
-    print("\nPlease enter your first name.\n")
-    fname = input("First Name: \n")
-    if fname == "":
-        print("First Name can not be blank.")
-        get_user_creds()
-    print("\nThank you.")
+    while True:
+        print("\nPlease enter your first name.\n")
+        fname = input("First Name: \n")
+        if fname == "":
+            print("First Name can not be blank.")
+        else:
+            print("\nThank you.")
+            break
 
     # Get last name
-    print("Please enter your last name.\n")
-    lname = input("Last Name: \n")
-    if lname == "":
-        print("Last Name can not be blank.")
-        get_user_creds()
-    print("\nThank you.")
+    while True:
+        print("Please enter your last name.\n")
+        lname = input("Last Name: \n")
+        if lname == "":
+            print("Last Name can not be blank.")
+        else:
+            print("\nThank you.")
+            break
 
     # Get and validate email
     while True:
