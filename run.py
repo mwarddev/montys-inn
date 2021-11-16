@@ -44,7 +44,6 @@ def get_user_creds():
     while True:
         print("Please enter your email address.\n")
         email = input("Email: \n")
-
         if validate.validate_email(email):
             print("\nThank you. Your email address is valid.\n")
             break
@@ -101,11 +100,16 @@ def get_duration_info():
     """
     # Takes user input and validates that it's an integer.
     while True:
-        print("\nHow many nights would you like to stay?\n")
-        duration = int(float(input("Number of nights: \n")))
-        if validate.validate_duration(duration):
-            print("Thank you.\n")
-            break
+        print("\nHow many nights would you like to stay?")
+        print("Maximum 14 nights\n")
+        nights = input("Number of nights: \n")
+        if nights != "":
+            duration = int(float(nights))
+            if validate.validate_duration(duration):
+                print("Thank you.\n")
+                break
+        else:
+            print("Value can not be empty")
     return duration
 
 
@@ -269,43 +273,47 @@ def cancel(bookings):
     booked_sheet = SHEET.worksheet("bookings")
     price_list = SHEET.worksheet("default_prices")
     info_sheet = SHEET.worksheet("user_booking_info")
-    cancel_option = int(input("Booking number: \n"))
+    cancel_string = input("Booking number: \n")
 
     try:
-        for ind, _ in enumerate(bookings):
-            # Matches option selected with the index in the bookings list
-            if cancel_option - 1 == ind:
-                # Gets the date of the selected booking
-                # to be used to get the row index in the bookings worksheet
-                selected_date = bookings[cancel_option - 1][3]
-                # Gets index of selected date
-                for date_ind, value in enumerate(booked_sheet.col_values(1)):
-                    if selected_date == value:
-                        selected_date_index = date_ind
-                print("\nCancelling your booking...")
-                # Gets the room row of the bookings worksheet to get
-                # column index
-                room_row = booked_sheet.row_values(1)
-                for cell_ind, val in enumerate(room_row):
-                    if val == bookings[cancel_option - 1][5]:
-                        room_col = cell_ind + 1
-                booked_row = selected_date_index + 1
-                row_count = 0
-                # Get values from default prices worksheet and add them to the
-                # same cells in the bookings worksheet
-                while row_count <= int(bookings[cancel_option - 1][4]) - 1:
-                    price = price_list.cell(booked_row + row_count,
-                                            room_col).value
-                    booked_sheet.update_cell(booked_row + row_count,
-                                             room_col, price)
-                    row_count += 1
-                # Delete user booking info from user_booking_info worksheet
-                for row_ind, booking_id in enumerate(info_sheet.col_values(8)):
-                    if booking_id == bookings[cancel_option - 1][7]:
-                        info_sheet.delete_rows(row_ind + 1)
-                # Print success and return to main menu
-                print("\nYour room has been cancelled")
-                main_menu()
+        if cancel_string != "":
+            cancel_option = int(cancel_string)
+            for ind, _ in enumerate(bookings):
+                # Matches option selected with the index in the bookings list
+                if cancel_option - 1 == ind:
+                    # Gets the date of the selected booking
+                    # to be used to get the row index in the bookings worksheet
+                    selected_date = bookings[cancel_option - 1][3]
+                    # Gets index of selected date
+                    for date_ind, val in enumerate(booked_sheet.col_values(1)):
+                        if selected_date == val:
+                            selected_date_index = date_ind
+                    print("\nCancelling your booking...")
+                    # Gets the room row of the bookings worksheet to get
+                    # column index
+                    room_row = booked_sheet.row_values(1)
+                    for cell_ind, val in enumerate(room_row):
+                        if val == bookings[cancel_option - 1][5]:
+                            room_col = cell_ind + 1
+                    booked_row = selected_date_index + 1
+                    row_count = 0
+                    # Get values from default prices worksheet and add
+                    # them to the same cells in the bookings worksheet
+                    while row_count <= int(bookings[cancel_option - 1][4]) - 1:
+                        price = price_list.cell(booked_row + row_count,
+                                                room_col).value
+                        booked_sheet.update_cell(booked_row + row_count,
+                                                 room_col, price)
+                        row_count += 1
+                    # Delete user booking info from user_booking_info worksheet
+                    for row_ind, id_num in enumerate(info_sheet.col_values(8)):
+                        if id_num == bookings[cancel_option - 1][7]:
+                            info_sheet.delete_rows(row_ind + 1)
+                    # Print success and return to main menu
+                    print("\nYour room has been cancelled")
+                    main_menu()
+        else:
+            raise ValueError()
     # Validates selected option.
     except ValueError:
         print("The option you entred is invalid.\nPlease enter a valid option")

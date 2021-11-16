@@ -69,3 +69,4 @@ The view bookings option uses the email address the user entered at the start sc
 The cancel booking option uses the "view bookings" function to compile a list of the user's bookings to cancel. Each booking is given a number which the user enter's to confirm they want to cancel that room. The entry is validated to make sure it's an integer and in the list. Then, using a default prices worksheet (a duplicate of the bookings worksheet without any bookings), the app extracts the original prices for the requested cancellation and replaces the "booked" strings in the bookings worksheet before deleting the relevant user data in the user bookings info worksheet. A confimation message is displayed and the user is returned to the main menu.
 ![cancel_confirm](read_me_images/cancel_confirm.png) 
 
+write requests limit exceeded

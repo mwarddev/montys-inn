@@ -89,7 +89,11 @@ def validate_duration(duration):
     """
     try:
         if isinstance(duration, int):
-            return True
+            if duration <= 14:
+                return True
+            else:
+                print("Maximum stay is 14 days")
+                print("please enter another number")
         else:
             raise ValueError(f"({duration}) is invalid")
     except ValueError as un_numable:
