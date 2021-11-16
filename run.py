@@ -103,13 +103,12 @@ def get_duration_info():
         print("\nHow many nights would you like to stay?")
         print("Maximum 14 nights\n")
         nights = input("Number of nights: \n")
-        if nights != "":
-            duration = int(float(nights))
-            if validate.validate_duration(duration):
-                print("Thank you.\n")
-                break
+        if validate.validate_duration(nights):
+            print("Thank you.\n")
+            duration = int(nights)
+            break
         else:
-            print("Value can not be empty")
+            print("Value must be a number")
     return duration
 
 
@@ -172,16 +171,24 @@ def book_room(room_data, date_info, duration_info, user_creds):
     # Prints other options
     print("Enter 0 to select a different date.")
     print("Enter 101 to exit to main menu.\n")
-    booking_option = int(input("Enter option: \n"))
+
     update_worksheet = SHEET.worksheet("user_booking_info")
     # Checks user input for other options selected first.
-    try:
-        if booking_option == 0:
-            main_booking()
-        elif booking_option == 101:
-            main_menu()
-        else:
-            print("\nProcessing your booking. Please wait...\n")
+    while True:
+        booking_choice = input("Enter option: \n")
+        if validate.validate_booking(booking_choice):
+            booking_option = int(booking_choice)
+            if booking_option == 0:
+                main_booking()
+            elif booking_option == 101:
+                main_menu()
+            # Validates if number is in options list.
+            elif booking_option not in booking_dict.keys():
+                print("\nThe option you entered is invalid.")
+                print("Please try again.")
+                book_room(room_data, date_info, duration_info, user_creds)
+            else:
+                print("\nProcessing your booking. Please wait...\n")
             # If room booking selected, validate input.
             # write to user_booking_info worksheet.
 
@@ -222,14 +229,6 @@ def book_room(room_data, date_info, duration_info, user_creds):
                     print(f"Total cost: £{price}\n")
                     print("Booking complete.\n")
                     main_menu()
-    # validates if input is a number.
-    except ValueError:
-        print("\nThe option you entered is invalid.\nPlease try again.")
-        book_room(room_data, date_info, duration_info, user_creds)
-    # Validates if number is in options list.
-    if booking_option not in booking_dict.keys():
-        print("\nThe option you entered is invalid.\nPlease try again.")
-        book_room(room_data, date_info, duration_info, user_creds)
 
 
 def get_booking_info(user_creds):

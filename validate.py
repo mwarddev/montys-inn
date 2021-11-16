@@ -82,21 +82,40 @@ def validate_future_date(user_date):
                 return False
 
 
-def validate_duration(duration):
+def validate_duration(nights):
     """
-    Converts user input to int & float then validates
-    if input is a string or number.
+    Validates if input is a string or number
+    then converts to int.
     """
     try:
-        if isinstance(duration, int):
-            if duration <= 14:
+        duration_pattern = r"^[\d]+$"
+        duration_match = re.search(duration_pattern, nights)
+        if duration_match:
+            if int(nights) <= 14:
                 return True
             else:
                 print("Maximum stay is 14 days")
                 print("please enter another number")
         else:
-            raise ValueError(f"({duration}) is invalid")
+            raise ValueError(f"({nights}) is invalid")
     except ValueError as un_numable:
         print(f"The number you entered {un_numable}")
         print("Please enter a valid number. For example: 7")
+        return False
+
+
+def validate_booking(booking_option):
+    """
+    Validates if input is a string or number.
+    """
+    try:
+        booking_pattern = r"^[\d]+$"
+        booking_match = re.search(booking_pattern, booking_option)
+        if booking_match:
+            return True
+        else:
+            raise ValueError(f"({booking_option}) is invalid")
+    except ValueError as un_numable:
+        print(f"\nThe option you entered {un_numable}")
+        print("Please enter a valid number. For example: 7\n")
         return False
