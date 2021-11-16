@@ -90,4 +90,33 @@ GSpread was installed and imported to enable Python to communicate with [Google 
 
 ### Google Oauth2
 
-Credentials was imported from the installed Goole Outh2 to allow Python to access [Google Sheets](https://www.google.co.uk/sheets/about/). 
+Credentials was imported from the installed Goole Outh2 to allow Python to access [Google Sheets](https://www.google.co.uk/sheets/about/).
+
+## Testing
+
+### PEP8 Linter
+
+The majority of testing was done during the development process, and with the use of tools such as [pylint](https://pylint.org/) and [flake8](https://flake8.pycqa.org/en/latest/). Upon completion of the project the code was run through the [PEP8 Linter](http://pep8online.com/) website to catch any missed errors.
+![pep8_run](read_me_images/pep8_run.png)
+![pep8_run](read_me_images/pep8_validate.png)
+Both files returned no errors.
+
+### Peer Code Reviews
+
+The site link was shared with family and friends to test for errors. 1 substantial bug discovered (see Stress Testing).
+
+### Stress Testing
+#### Bug Fix
+
+A peer code review test revealed an API error when cancelling a booking with an excessive amount of nights (60). Gspred threw the exception "gspread exceptions API error: Limit exceeded for read & write requests per minute per user". The code was then run in quick succession, booking and cancelling a slowly reducing number of nights until a stable number (14) was discovered not to raise the error. The validate_duration function was then updated to limit the number of bookable nights to 14.
+
+### Value Errors
+#### Bug Fixes
+
+During the stress testing exercise a typo was made whilst navigating menus and and empty value was issued rasing a value error for the "Cancel booking menu". This error was amended in the "cancel" function with a conditional statement checking for an empty string. All other menus were then checked for the same issue the duration function was amended to fix this bug too. All menu inputs were then tested with string inputs instead of numbers. this threw up value errors for the duration function and book_room function. The validator function was re-written for the duration function and a new validator function was written for the book_room function. The book_room function was then amended to work with the validator.
+No other bugs recorded.
+
+## Deployment
+
+
+
