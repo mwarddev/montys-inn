@@ -3,6 +3,17 @@
 
 Monty's Inn Room Booking System is a Command Line Interface (CLI) application for users to book a stay in the fictional beachfront Inn with a Monty Python theme. Users can check availabilty for any of the 10 rooms Monty's Inn has to offer. Rooms also have a different number of beds, different facilities and different views. Users will be able to book a room and cancel the reservation at a later date if required. All room prices include the cost of breakfasts which consist of spam, eggs and ham.
 
+View the live app here - https://montys-inn.herokuapp.com/
+
+## Contents
+* [Description](#room-booking-system)
+* [User Stories](#user-stories)
+* [Structure](#structure)
+* [Technologies Used](#technologies-used)
+* [Testing](#testing)
+* [Deployment](#deployment)
+* [Credits](#credits)
+
 ## User stories
 
 * User Goals
@@ -78,11 +89,11 @@ To make the code a little easier to read, all validator functions were added to 
 
 ### Regular Expressions (re)
 
-The Regular expressions (re) library was imported to the validator file for use in validator functions to match user inputs against re patterns.
+The Regular expressions (re) module was imported to the validator file for use in validator functions to match user inputs against re patterns.
 
 ### Datetime (Date)
 
-Date (date) from the datetime library was imported to the validator file to match today's date against user input, and ensure past dates are not entered.
+Date (date) from the datetime module was imported to the validator file to match today's date against user input, and ensure past dates are not entered.
 
 ### GSpread (gspread)
 
@@ -91,6 +102,10 @@ GSpread was installed and imported to enable Python to communicate with [Google 
 ### Google Oauth2
 
 Credentials was imported from the installed Goole Outh2 to allow Python to access [Google Sheets](https://www.google.co.uk/sheets/about/).
+
+### Google Sheets
+
+[Google Sheets](https://www.google.co.uk/sheets/about/) was used to store and manipulate all data for the app.
 
 ## Testing
 
