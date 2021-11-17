@@ -3,12 +3,16 @@
 
 Monty's Inn Room Booking System is a Command Line Interface (CLI) application for users to book a stay in the fictional beachfront Inn with a Monty Python theme. Users can check availabilty for any of the 10 rooms Monty's Inn has to offer. Rooms also have a different number of beds, different facilities and different views. Users will be able to book a room and cancel the reservation at a later date if required. All room prices include the cost of breakfasts which consist of spam, eggs and ham.
 
+![welcome_page_crop](read_me_images/welcome_page_crop.png)
+
 View the live app here - https://montys-inn.herokuapp.com/
 
 ## Contents
+
 * [Description](#room-booking-system)
 * [User Stories](#user-stories)
 * [Structure](#structure)
+* [Features](#features)
 * [Technologies Used](#technologies-used)
 * [Testing](#testing)
 * [Deployment](#deployment)
@@ -32,6 +36,8 @@ View the live app here - https://montys-inn.herokuapp.com/
 This flowchart, created with [lucid.app](https://lucid.app), shows the flow of the app's logic.
 
 ![flowchart](read_me_images/flowchart.png)
+
+## Features
 
 ### Welcome Screen
 
@@ -105,7 +111,7 @@ Credentials was imported from the installed Goole Outh2 to allow Python to acces
 
 ### Google Sheets
 
-[Google Sheets](https://www.google.co.uk/sheets/about/) was used to store and manipulate all data for the app. As the worksheets store user information, and I don't have consent to share their data, I can't add a link to the sheets used in this app.
+[Google Sheets](https://www.google.co.uk/sheets/about/) was used to store and manipulate all data for the app.
 
 ## Testing
 
