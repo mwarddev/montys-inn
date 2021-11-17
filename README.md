@@ -118,5 +118,43 @@ No other bugs recorded.
 
 ## Deployment
 
+The repository for this project was created in [GitHub](https://github.com/) but the project is deployed to [Heroku](https://id.heroku.com/) as GitHub pages is not a suitable platform for this type of application.
+The following are the steps taken to deploy to Heroku.
+
+* Add new line character to the end of each input request to allow the code to work correctly in the deployed mock terminal.
+* Create a list of requirements to allow the code to run by populating the requirements file by running the command "pip3 freeze > requirements.txt" in the terminal.
+* Commit and push changes to GitHub.
+* Login to Heroku and click "Create new app".
+* Give the app a unique name and select region (Euroupe). the click "Create app".
+* Click the settings tab and click "Reveal config vars".
+* Type "CREDS" (all caps) into the "KEY" field, then go to the GitPod workspace and copy the contents of the "creds.json" file and paste it into the VALUE field in Heroku settings. This is needed for Heroku to have all the necessary permissions to run the app once deployed.
+* Add the word "PORT" (all caps) into the next "KEY" field and the number 8000 into the "VALUE" field to allow the mock terminal to work correctly.
+* Scroll down and click on "Add buildpack". Click "Python" and save changes.
+* Add another buildpack for Node.js by clicking and saving changes again. The buildpacks should be in the order of Python above Node.JS to ensure Python is installed first when deploying the app.
+* Scroll to the top and click on the "Deploy" tab.
+* Select GitHub as the deployment method (as that is where the repo is located) and then confirm connection to GitHub.
+* Type the name of the repository (montys-inn) it the search field and click "Search".
+* When the repository is found, click the "Connect" button next to the repository name.
+* Click the "Deploy Branch" button to build the app.
+* Once the app is built a success message is displayed along with a button to view the live app. Before clicking the button to view the app, click the "Enable Automatic Deploys" button to update the app automatically each time new commits are pushed to GitHub if the app is still under developement.
+* Click the button to view the app and test the program.
+* Check the spreadsheet is updating as expected.
+
+The App is successfully deployed.
+
+## Credits
+
+* Inspiration for the code layout was taken from the "Love Sandwiches" walkthrough project from [Code Institute](https://codeinstitute.net/).
+
+* My course material learned from [SoloLearn](https://www.sololearn.com/home) was used for a refresher on working with the Regular Expressions module.
+
+* [StackOverflow](https://stackoverflow.com/) was a useful resource for synax issues.
+
+* [docs.python.org](https://docs.python.org/3/) was a good resource for working with the datetime module.
+
+* Finally. A big thank you to friends and family for offering advice and helping to test the app.
+
+
+
 
 
