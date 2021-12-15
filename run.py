@@ -60,7 +60,7 @@ def menu(creds):
     menu_options = """
     Enter 1 to check for availabilty and book a room.
     Enter 2 to view your booking/s.
-    Enter 3 cancel a booking.
+    Enter 3 to cancel a booking.
     """
     print(menu_options)
     # Takes user input and checks choice against avilable options
