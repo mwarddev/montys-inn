@@ -372,7 +372,7 @@ def booking_info():
 # Welcome message.
 welcome = """
 \nWelcome to Monty's Inn\n
-Monty's Inn is a ficticious beachfront bed and breakfast.
+Monty's Inn is a fictitious beachfront bed and breakfast.
 Using this app you can check availability, book, and cancel rooms.
 All prices include breakfast which consists of spam eggs and ham
 (vegan option available).
