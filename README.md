@@ -7,8 +7,6 @@ Monty's Inn Room Booking System is a Command Line Interface (CLI) application fo
 
 ![welcome_page_crop](read_me_images/welcome_page_crop.png)
 
-View the live app here - https://montys-inn.herokuapp.com/
-
 ## Contents
 
 * [Description](#room-booking-system)
