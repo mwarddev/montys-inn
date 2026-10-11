@@ -1,3 +1,5 @@
+> :information_source: This project is no longer being maintained
+
 # Monty's Inn
 ## Room Booking System
 
